@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <meta name="keywords" content="keyword1,keyword2,keyword3"/>
+    <meta name="description" content="this is my page"/>
+    <meta name="content-type" content="text/html; charset=UTF-8"/>
+
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+
+</head>
+
+<body>
+<hr/>
+<form enctype="multipart/form-data" method="post" action="/audio/lixue/getQR">
+    输入书名的编号（每本书对应一个唯一的编号,需要自己记录下来，下次上传视频时需要）<input type="text" name="bookId"/>
+    <input type="submit" value="生成二维码"/>
+</form>
+<hr/>
+<form enctype="multipart/form-data" method="post" action="/audio/upload">
+    输入书名的编号<input type="text" name="bookId"/>
+    选择你的文件<input type="file" name="file"/>
+    <input type="submit" value="上传"/>
+</form>
+<hr/>
+</body>
+</html>

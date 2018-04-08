@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true" scan="true" scanPeriod="120 seconds">
+    <property name="APP_NAME" value="audio"/>
+    <contextName>${APP_NAME}</contextName>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"project": "${APP_NAME}"}</customFields>
+        </encoder>
+    </appender>
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <!--本地-->
+    <springProfile name="local">
+        <logger name="list" level="debug" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+    </springProfile>
+    <!--开发-->
+    <springProfile name="developing">
+        <logger name="com.lz" level="debug" additivity="false">
+            <appender-ref ref="STDOUT"/>
+        </logger>
+    </springProfile>
+    <!-- 测试和正式-->
+    <springProfile name="staging,product,proxia,pro">
+        <logger name="com.lz" level="info" additivity="false">
+            <appender-ref ref="STDOUT"/>
+        </logger>
+    </springProfile>
+
+</configuration>

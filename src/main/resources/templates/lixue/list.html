@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+            color: #777
+        }
+
+        body {
+            padding: 5px;
+        }
+
+        video {
+            width: 100%;
+            display: block;
+        }
+
+        .video_list {
+            width: 100%;
+            border-radius: 5px;
+            margin-top: 30px
+        }
+
+        .video_list ul li {
+            height: 35px;
+            line-height: 35px;
+            background: #f1f1f1;
+            border-radius: 5px;
+            margin: 6px 0;
+            padding: 0 1em
+        }
+
+        .video_list ul li:active {
+            background: #d3d3d3;
+        }
+
+        .video_list ul li > small {
+            float: right;
+        }
+    </style>
+</head>
+<body>
+<video src="" id="myMusic" controls="controls"></video>
+<div class="video_list">
+    <ul>
+        <li th:each="prod : ${list}" class="list" th:attr="data-url=${prod.fileUrl}" th:text="${prod.fileName}">
+            <small>01:53</small>
+        </li>
+
+    </ul>
+</div>
+<script>
+    (function (doc) {
+
+        var video = doc.querySelector("#myMusic"),
+            vList = doc.querySelectorAll(".list");
+        vList.forEach(function (ele, index) {
+            ele.onclick = function () {
+                video.src = this.getAttribute("data-url");
+                vList.forEach(function (v, i) {
+                    vList[i].style.color = "#777";
+                })
+                this.style.color = "#176be9";
+                video.play();
+            }
+        })
+
+    })(document)
+
+</script>
+</body>
+</html>
