@@ -27,7 +27,7 @@ public class LoginContoller {
         UserInfo userInfo = userInfoRepository.findByName(name);
         if (userInfo!=null && userInfo.getPassword().equals(MD5Util.getMD5(password))) {
             request.getSession().setAttribute("user",userInfo);
-            return new ModelAndView("/lixue/qr");
+            return new ModelAndView("/home");
         } else {
             return new ModelAndView("/login");
         }

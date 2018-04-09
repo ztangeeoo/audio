@@ -2,7 +2,6 @@
   <library name="Gradle: org.springframework.boot:spring-boot-devtools:1.5.4.RELEASE">
     <CLASSES>
       <root url="jar://F:/gradle/gradle-4.1-bin/gradle-4.1/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-devtools/1.5.4.RELEASE/a2529c5831fef1338f56bb894a2d85e195923ad6/spring-boot-devtools-1.5.4.RELEASE.jar!/" />
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-devtools/1.5.4.RELEASE/a2529c5831fef1338f56bb894a2d85e195923ad6/spring-boot-devtools-1.5.4.RELEASE.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

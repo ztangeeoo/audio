@@ -2,7 +2,6 @@
   <library name="Gradle: org.springframework.boot:spring-boot-starter-data-mongodb:1.5.4.RELEASE">
     <CLASSES>
       <root url="jar://F:/gradle/gradle-4.1-bin/gradle-4.1/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-data-mongodb/1.5.4.RELEASE/850b9c3618c9b456dc5caaede86ecffeb78e26a0/spring-boot-starter-data-mongodb-1.5.4.RELEASE.jar!/" />
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-data-mongodb/1.5.4.RELEASE/850b9c3618c9b456dc5caaede86ecffeb78e26a0/spring-boot-starter-data-mongodb-1.5.4.RELEASE.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

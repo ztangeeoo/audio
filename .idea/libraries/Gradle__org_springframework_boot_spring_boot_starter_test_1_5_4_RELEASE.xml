@@ -2,7 +2,6 @@
   <library name="Gradle: org.springframework.boot:spring-boot-starter-test:1.5.4.RELEASE">
     <CLASSES>
       <root url="jar://F:/gradle/gradle-4.1-bin/gradle-4.1/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-test/1.5.4.RELEASE/a764033c4be6e73310a6b12604a37c20d3bd0176/spring-boot-starter-test-1.5.4.RELEASE.jar!/" />
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-test/1.5.4.RELEASE/a764033c4be6e73310a6b12604a37c20d3bd0176/spring-boot-starter-test-1.5.4.RELEASE.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

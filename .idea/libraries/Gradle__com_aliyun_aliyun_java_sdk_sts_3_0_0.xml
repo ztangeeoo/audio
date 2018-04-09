@@ -2,7 +2,6 @@
   <library name="Gradle: com.aliyun:aliyun-java-sdk-sts:3.0.0">
     <CLASSES>
       <root url="jar://F:/gradle/gradle-4.1-bin/gradle-4.1/caches/modules-2/files-2.1/com.aliyun/aliyun-java-sdk-sts/3.0.0/869052150b157e739f6c3a4d97a75a85ef89e3bb/aliyun-java-sdk-sts-3.0.0.jar!/" />
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.aliyun/aliyun-java-sdk-sts/3.0.0/869052150b157e739f6c3a4d97a75a85ef89e3bb/aliyun-java-sdk-sts-3.0.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
