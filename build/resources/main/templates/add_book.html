@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="lixue/css/global.css" class="sr">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />
+    <link rel="stylesheet" href="lixue/css/global.css" class="sr"/>
     <title>Document</title>
 </head>
 <body>
@@ -17,26 +18,20 @@
                     <a href="">退出管理</a>
                 </div>
             </div>
-        
-
 
 
     <div class="main">
 
         <div class="add_book">
-            <form action="" mounted="post">
-                <p>书名：<input type="text" class="lz_input"></p> 
-                <p>编号：<input type="text"  class="lz_input"></p>
-                <p>封面：<input type="file"  class="lz_input"></p>
-                <p>描述：<textarea name="" id="" cols="30" rows="10" class="lz_input" style="height: 100px; width: 300px"></textarea></p>
-                <input type="submit" class="lz_btn btn-info" value="保存"></input>
-                <input type="reset" class="lz_btn btn-none" value="重置"></input>
+            <form action="/audio/lixue/addBook" mounted="post"  method="post" enctype="multipart/form-data">
+                <p>书名：<input type="text" name="bookName" class="lz_input"/></p>
+                <p>编号：<input type="text" name="bookId"  class="lz_input"/></p>
+                <p>封面：<input type="file"  name="bookCover" class="lz_input"/></p>
+                <p>描述：<textarea name="bookDescription" id="" cols="30" rows="10" class="lz_input" style="height: 100px; width: 300px"></textarea></p>
+                <input type="submit" class="lz_btn btn-info" value="保存"/>
+                <input type="reset" class="lz_btn btn-none" value="重置"/>
             </form>
-           
         </div>
-
-
-        
     </div>
 </body>
 </html>

@@ -10,12 +10,12 @@ public class CustomWebMvcConfigurerAdapter extends WebMvcConfigurerAdapter {
      *
      * @param registry
      */
-    @Override
+  /*  @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //为swagger2添加资源映射
-        registry.addResourceHandler("/lixue/**")
-                .addResourceLocations("classpath:/templates/lixue/");
-    }
+        registry.addResourceHandler("/lixue*//**")
+                .addResourceLocations("classpath:/resources/lixue/");
+    }*/
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {

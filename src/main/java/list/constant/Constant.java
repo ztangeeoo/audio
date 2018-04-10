@@ -21,6 +21,11 @@ public class Constant {
     public static final String EVENT_TYPE_SUBSCRIBE = "subscribe";
 
     /**
+     * 事件类型：SCAN(已关注)
+     */
+    public static final String EVENT_TYPE_SCAN = "SCAN";
+
+    /**
      * 事件类型：unsubscribe(取消关注)
      */
     public static final String EVENT_TYPE_UNSUBSCRIBE = "unsubscribe";

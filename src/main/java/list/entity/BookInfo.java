@@ -18,6 +18,10 @@ public class BookInfo {
     private String bookId;
     @Field("booK_name")
     private String bookName;
+    @Field("book_cover")
+    private String bookCover;
+    @Field
+    private String bookDescription;
     @Field("audio_list")
     private List<AudioInfo> audioInfoList;
 
@@ -25,6 +29,22 @@ public class BookInfo {
     private Date createAt;
 
     public BookInfo() {
+    }
+
+    public String getBookDescription() {
+        return bookDescription;
+    }
+
+    public void setBookDescription(String bookDescription) {
+        this.bookDescription = bookDescription;
+    }
+
+    public String getBookCover() {
+        return bookCover;
+    }
+
+    public void setBookCover(String bookCover) {
+        this.bookCover = bookCover;
     }
 
     public String getBookId() {
