@@ -24,9 +24,11 @@ public class BookInfo {
     private String bookDescription;
     @Field("audio_list")
     private List<AudioInfo> audioInfoList;
-
+    @Field("qr_code")
+    private String qrCode;
     @Field("create_at")
     private Date createAt;
+
 
     public BookInfo() {
     }
@@ -71,6 +73,14 @@ public class BookInfo {
         this.audioInfoList = audioInfoList;
     }
 
+    public String getQrCode() {
+        return qrCode;
+    }
+
+    public void setQrCode(String qrCode) {
+        this.qrCode = qrCode;
+    }
+
     public Date getCreateAt() {
         return createAt;
     }
@@ -78,4 +88,6 @@ public class BookInfo {
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
     }
+
+
 }

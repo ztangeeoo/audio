@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <link rel="stylesheet" href="./css/global.css" class="sr"/>
+    <link rel="stylesheet" th:href="@{/css/global.css}" class="sr"/>
     <title>Document</title>
 </head>
 <body>
@@ -12,9 +12,9 @@
     <div class="header">
             <div>
                 <span>后台管理</span>
-                <a href="/home.html">图书管理</a>
-                <a href="/add_book.html">添加图书</a>
-                <a href="">退出管理</a>
+                <a th:href="@{/homeList(pageNumber=1,pageSize=10)}">图书管理</a>
+                <a href="/audio/addBook">添加图书</a>
+                <a href="/audio/loginout">退出管理</a>
             </div>
     </div>
         
@@ -43,7 +43,7 @@
                     <td th:text="${video.fileName}">18-04-07 17:37:43</td>
                     <td th:text="${video.fileTime}">15280115</td>
                     <td>                        
-                        <a href="#">删除</a>                                                                     
+                        <a th:href="@{removeVideo(bookId=${bookId},audioId=${video.audioId})}">删除</a>
                     </td>
                 </tr>
                

@@ -54,10 +54,5 @@ public class WXController {
         return null;
     }
 
-    @PostMapping("/lixue/getQR")
-    public Object getQR(@RequestParam String bookId, HttpServletResponse response) {
-        weixinService.getQR(bookId, response);
-        return ResultUtil.success("二维码生成成功！");
 
-    }
 }

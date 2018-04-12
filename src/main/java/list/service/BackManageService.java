@@ -2,10 +2,10 @@ package list.service;
 
 import list.dto.PageDTO;
 import list.entity.BookInfo;
-import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +25,17 @@ public interface BackManageService {
 
     List<BookInfo> findListBook(PageDTO pageDTO);
 
+    void changeBook(HttpServletRequest request,MultipartFile bookCover);
 
+    BookInfo findby(String bookId);
+
+    void removeBook(String bookId);
+
+    void removeVideo(String bookId,String audioId);
+
+    ArrayList<Integer> countPage( PageDTO pageDTO);
+
+    void getQR(String bookId, HttpServletResponse response);
 
 
 }

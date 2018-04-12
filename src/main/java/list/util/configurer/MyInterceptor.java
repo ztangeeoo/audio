@@ -18,7 +18,7 @@ public class MyInterceptor implements HandlerInterceptor {
         UserInfo user=(UserInfo) request.getSession().getAttribute("user");
         if(null==user){
             response.sendRedirect("toLogin");
-            flag = true;
+            flag = false;
         }else{
             flag = true;
         }

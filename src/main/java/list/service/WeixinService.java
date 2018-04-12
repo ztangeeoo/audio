@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public interface WeixinService {
 
-    void getQR(String bookId, HttpServletResponse response);
+
 
     Object sendTextMessage(Map<String,String> map);
 

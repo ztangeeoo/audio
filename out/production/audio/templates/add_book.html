@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
     <meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />
-    <link rel="stylesheet" href="lixue/css/global.css" class="sr"/>
+    <link rel="stylesheet" th:href="@{/css/global.css}" class="sr"/>
     <title>Document</title>
 </head>
 <body>
@@ -13,9 +13,9 @@
         <div class="header">
                 <div>
                     <span>后台管理</span>
-                    <a href="/home.html">图书管理</a>
-                    <a href="/add_book.html">添加图书</a>
-                    <a href="">退出管理</a>
+                    <a th:href="@{/homeList(pageNumber=1,pageSize=10)}">图书管理</a>
+                    <a href="/audio/addBook">添加图书</a>
+                    <a href="/audio/loginout">退出管理</a>
                 </div>
             </div>
 

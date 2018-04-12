@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />
+    <link rel="stylesheet" th:href="@{/css/global.css}" class="sr"/>
+    <title>Document</title>
+</head>
+<body>
+
+        <div class="header">
+                <div>
+                    <span>后台管理</span>
+                    <a th:href="@{/homeList(pageNumber=1,pageSize=10)}">图书管理</a>
+                    <a href="/audio/addBook">添加图书</a>
+                    <a href="/audio/loginout">退出管理</a>
+                </div>
+            </div>
+
+
+    <div class="main">
+
+        <div class="add_book">
+            <form action="/audio/lixue/changeBook" mounted="post"  method="post" enctype="multipart/form-data">
+                <p>书名：<input  name="bookName"   th:value="${book.bookName}" class="lz_input"/></p>
+                <p><input type="hidden" name="bookId"  th:hidden="${book.bookId}" th:value="${book.bookId}" class="lz_input"/></p>
+                <p>封面：<input type="file"  name="bookCover"  class="lz_input"/></p>
+                <p>描述：<textarea name="bookDescription" th:text="${book.bookDescription}" id="" cols="30" rows="10" class="lz_input" style="height: 100px; width: 300px"></textarea></p>
+                <input type="submit" class="lz_btn btn-info" value="保存"/>
+                <input type="reset" class="lz_btn btn-none" value="重置"/>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

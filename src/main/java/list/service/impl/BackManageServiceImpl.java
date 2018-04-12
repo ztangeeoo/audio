@@ -7,24 +7,22 @@ import list.entity.BookInfo;
 import list.service.BackManageService;
 import list.util.UploadFileUtil;
 import list.util.http.RestTemplateUtil;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 
 /**
  * @author ztang
@@ -32,6 +30,10 @@ import java.util.UUID;
  */
 @Service
 public class BackManageServiceImpl implements BackManageService {
+
+    private static final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
+    private static final String ACCESS_TICKET_URL = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=%s";
+    private static final String ACCESS_QR_URL = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=%s";
 
     @Value("${gzh.appid}")
     private String appid;
@@ -47,10 +49,13 @@ public class BackManageServiceImpl implements BackManageService {
     @Override
     public void addVideo(MultipartFile file, String bookId, String fileTime) {
         String fileName = file.getOriginalFilename();
-        String url = UploadFileUtil.upload(file);
+        String url = UploadFileUtil.uploadFile(file);
         BookInfo bookInfo = bookInfoRepository.findOne(bookId);
 
-        ArrayList<AudioInfo> list = new ArrayList<>();
+        List<AudioInfo> list = bookInfo.getAudioInfoList();
+        if (ObjectUtils.isEmpty(list)) {
+            list = new ArrayList<>();
+        }
         AudioInfo audioInfo = new AudioInfo();
         audioInfo.setAudioId(UUID.randomUUID().toString().replace("-", "").toUpperCase());
         audioInfo.setFileTime(fileTime);
@@ -59,7 +64,7 @@ public class BackManageServiceImpl implements BackManageService {
         list.add(audioInfo);
         bookInfo.setAudioInfoList(list);
         bookInfoRepository.save(bookInfo);
-        RestTemplateUtil.excute("GET","http://localhost:8004/audio/videoList?bookId="+bookId,null, MediaType.TEXT_HTML);
+
     }
 
     @Override
@@ -72,7 +77,7 @@ public class BackManageServiceImpl implements BackManageService {
         String bookDescription = request.getParameter("bookDescription");
         String bookName = request.getParameter("bookName");
         String bookId = request.getParameter("bookId");
-        String bookImage = UploadFileUtil.upload(bookCover);
+        String bookImage = UploadFileUtil.uploadFile(bookCover);
         BookInfo bookInfo = new BookInfo();
         bookInfo.setBookCover(bookImage);
         bookInfo.setBookDescription(bookDescription);
@@ -82,14 +87,107 @@ public class BackManageServiceImpl implements BackManageService {
         bookInfoRepository.save(bookInfo);
     }
 
+
+    @Override
+    public void changeBook(HttpServletRequest request, MultipartFile bookCover) {
+        String bookDescription = request.getParameter("bookDescription");
+        String bookName = request.getParameter("bookName");
+        String bookId = request.getParameter("bookId");
+        BookInfo bookInfo = bookInfoRepository.findOne(bookId);
+        if(!bookCover.isEmpty()){
+            String bookImage = UploadFileUtil.uploadFile(bookCover);
+            bookInfo.setBookCover(bookImage);
+        }
+        bookInfo.setBookDescription(bookDescription);
+        bookInfo.setBookName(bookName);
+        bookInfo.setCreateAt(new Date());
+        bookInfoRepository.save(bookInfo);
+    }
+
     @Override
     public List<BookInfo> findListBook(PageDTO params) {
+
+        int pageSize = params.getPageSize();
         Query query = new Query();
-        query.limit(params.getPageSize());
+        query.skip(pageSize*(params.getPageNum()-1));
+        query.limit(pageSize);
 
         Sort.Order order = new Sort.Order(Sort.Direction.DESC, "createAt");
         Sort orders = new Sort(order);
         query.with(orders);
         return mongoTemplate.find(query, BookInfo.class);
+    }
+
+
+    @Override
+    public BookInfo findby(String bookId) {
+        return bookInfoRepository.findOne(bookId);
+    }
+
+    @Override
+    public void removeBook(String bookId) {
+        bookInfoRepository.delete(bookId);
+    }
+
+    @Override
+    public void removeVideo(String bookId, String audioId) {
+        BookInfo one = bookInfoRepository.findOne(bookId);
+        List<AudioInfo> audioInfoList = one.getAudioInfoList();
+        Iterator<AudioInfo> iterator = audioInfoList.iterator();
+        while (iterator.hasNext()){
+            AudioInfo next = iterator.next();
+            if(audioId.equals(next.getAudioId())){
+                iterator.remove();
+            }
+        }
+        one.setAudioInfoList(audioInfoList);
+        bookInfoRepository.save(one);
+    }
+
+    @Override
+    public ArrayList<Integer> countPage( PageDTO pageDTO) {
+        ArrayList<Integer> pageList = new ArrayList<>();
+        long count = bookInfoRepository.count();
+        if (count > 0) {
+            int page = (int) ((count + pageDTO.getPageSize()-1) / pageDTO.getPageSize());
+            for (int i = 1; i <= page; i++) {
+                pageList.add(i);
+            }
+        }
+        return pageList;
+    }
+    @Override
+    public void getQR(String bookId, HttpServletResponse response) {
+        JSONObject result = RestTemplateUtil
+                .excute("GET", String.format(ACCESS_TOKEN_URL, appid, secret), null, MediaType.APPLICATION_JSON_UTF8);
+        Map<String, String> intMap = new HashMap<>();
+        intMap.put("scene_str", bookId);
+        Map<String, Map<String, String>> mapMap = new HashMap<>();
+        mapMap.put("scene", intMap);
+        Map<String, Object> paramsMap = new HashMap<>();
+        paramsMap.put("action_name", "QR_LIMIT_STR_SCENE");
+        paramsMap.put("action_info", mapMap);
+        JSONObject jsonObject = JSONObject.fromObject(paramsMap);
+        //{"action_name": "QR_LIMIT_STR_SCENE", "action_info": {"scene": {"scene_str": "test"}}}
+        JSONObject excute = RestTemplateUtil
+                .excute("POST", String.format(ACCESS_TICKET_URL, result.getString("access_token")), jsonObject, MediaType.APPLICATION_JSON_UTF8);
+        String qrCode = getErWeiMa(String.format(ACCESS_QR_URL, excute.getString("ticket")), bookId);
+        BookInfo one = bookInfoRepository.findOne(bookId);
+        one.setQrCode(qrCode);
+        bookInfoRepository.save(one);
+    }
+    private String getErWeiMa(String url, String bookId) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        ResponseEntity<byte[]> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                new HttpEntity<byte[]>(headers),
+                byte[].class);
+
+        byte[] result = response.getBody();
+        return UploadFileUtil.uploadImage(result,bookId);
     }
 }
