@@ -17,13 +17,13 @@ public interface BackManageService {
     /**
      * 文件上传
      */
-    void Upload(MultipartFile file, String bookId);
+    void addVideo(MultipartFile file, String bookId,String fileTime);
 
     BookInfo getAudioList(String bookId);
 
     void addBook(HttpServletRequest request,MultipartFile bookCover);
 
-    Page<BookInfo> findListBook(PageDTO pageDTO);
+    List<BookInfo> findListBook(PageDTO pageDTO);
 
 
 

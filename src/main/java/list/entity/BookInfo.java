@@ -31,22 +31,6 @@ public class BookInfo {
     public BookInfo() {
     }
 
-    public String getBookDescription() {
-        return bookDescription;
-    }
-
-    public void setBookDescription(String bookDescription) {
-        this.bookDescription = bookDescription;
-    }
-
-    public String getBookCover() {
-        return bookCover;
-    }
-
-    public void setBookCover(String bookCover) {
-        this.bookCover = bookCover;
-    }
-
     public String getBookId() {
         return bookId;
     }
@@ -61,6 +45,22 @@ public class BookInfo {
 
     public void setBookName(String bookName) {
         this.bookName = bookName;
+    }
+
+    public String getBookCover() {
+        return bookCover;
+    }
+
+    public void setBookCover(String bookCover) {
+        this.bookCover = bookCover;
+    }
+
+    public String getBookDescription() {
+        return bookDescription;
+    }
+
+    public void setBookDescription(String bookDescription) {
+        this.bookDescription = bookDescription;
     }
 
     public List<AudioInfo> getAudioInfoList() {

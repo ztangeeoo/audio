@@ -35,11 +35,11 @@ public class RestTemplateUtil implements InitializingBean {
         setRestTemplate(template);
     }
 
-    public static JSONObject excute(String method, String url, JSONObject params) {
+    public static JSONObject excute(String method, String url, JSONObject params,MediaType mediaType) {
         JSONObject  result = new JSONObject();
         try {
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            headers.setContentType(mediaType);
             HttpEntity<JSONObject> entity = null;
             if (params != null) {
                 entity = new HttpEntity<>(params, headers);

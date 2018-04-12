@@ -6,12 +6,17 @@ import list.entity.AudioInfo;
 import list.entity.BookInfo;
 import list.service.BackManageService;
 import list.util.UploadFileUtil;
+import list.util.http.RestTemplateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author ztang
@@ -34,31 +40,26 @@ public class BackManageServiceImpl implements BackManageService {
 
     @Autowired
     private BookInfoRepository bookInfoRepository;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
 
     @Override
-    public void Upload(MultipartFile file, String bookId) {
+    public void addVideo(MultipartFile file, String bookId, String fileTime) {
         String fileName = file.getOriginalFilename();
         String url = UploadFileUtil.upload(file);
-        BookInfo info = bookInfoRepository.findOne(bookId);
-        if (info == null) {
-            BookInfo bookInfo = new BookInfo();
-            bookInfo.setBookId(bookId);
-            ArrayList<AudioInfo> list = new ArrayList<>();
-            AudioInfo audioInfo = new AudioInfo();
-            audioInfo.setFileName(fileName);
-            audioInfo.setFileUrl(url.toString());
-            list.add(audioInfo);
-            bookInfo.setAudioInfoList(list);
-            bookInfo.setCreateAt(new Date());
-            bookInfoRepository.save(bookInfo);
-        } else {
-            AudioInfo ai = new AudioInfo();
-            ai.setFileName(fileName);
-            ai.setFileUrl(url.toString());
-            info.getAudioInfoList().add(ai);
-            bookInfoRepository.save(info);
-        }
+        BookInfo bookInfo = bookInfoRepository.findOne(bookId);
+
+        ArrayList<AudioInfo> list = new ArrayList<>();
+        AudioInfo audioInfo = new AudioInfo();
+        audioInfo.setAudioId(UUID.randomUUID().toString().replace("-", "").toUpperCase());
+        audioInfo.setFileTime(fileTime);
+        audioInfo.setFileName(fileName);
+        audioInfo.setFileUrl(url);
+        list.add(audioInfo);
+        bookInfo.setAudioInfoList(list);
+        bookInfoRepository.save(bookInfo);
+        RestTemplateUtil.excute("GET","http://localhost:8004/audio/videoList?bookId="+bookId,null, MediaType.TEXT_HTML);
     }
 
     @Override
@@ -67,8 +68,8 @@ public class BackManageServiceImpl implements BackManageService {
     }
 
     @Override
-    public void addBook(HttpServletRequest request,MultipartFile bookCover) {
-        String bookDescription =  request.getParameter("bookDescription");
+    public void addBook(HttpServletRequest request, MultipartFile bookCover) {
+        String bookDescription = request.getParameter("bookDescription");
         String bookName = request.getParameter("bookName");
         String bookId = request.getParameter("bookId");
         String bookImage = UploadFileUtil.upload(bookCover);
@@ -82,10 +83,13 @@ public class BackManageServiceImpl implements BackManageService {
     }
 
     @Override
-    public Page<BookInfo> findListBook(PageDTO params) {
-        int pageSize = params.getPageSize() == 0 ? 15 : params.getPageSize();
-        Pageable pageable = new PageRequest(params.getPageNum() - 1, pageSize);
-        return bookInfoRepository.findAllByOrderByCreateAtDesc(pageable);
+    public List<BookInfo> findListBook(PageDTO params) {
+        Query query = new Query();
+        query.limit(params.getPageSize());
 
+        Sort.Order order = new Sort.Order(Sort.Direction.DESC, "createAt");
+        Sort orders = new Sort(order);
+        query.with(orders);
+        return mongoTemplate.find(query, BookInfo.class);
     }
 }

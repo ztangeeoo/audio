@@ -28,7 +28,7 @@ public class LoginContoller {
         UserInfo userInfo = userInfoRepository.findByName(name);
         if (userInfo != null && userInfo.getPassword().equals(MD5Util.getMD5(password))) {
             request.getSession().setAttribute("user", userInfo);
-            response.sendRedirect("/audio/list_home");
+            response.sendRedirect("/audio/list_home?pageNumber=1&pageSize=15");
         } else {
 
         }

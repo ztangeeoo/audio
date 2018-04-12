@@ -14,6 +14,11 @@ public class PageDTO {
 
     public PageDTO(){}
 
+    public PageDTO(int pageNum, int pageSize) {
+        this.pageNum = pageNum;
+        this.pageSize = pageSize;
+    }
+
     public PageDTO(JSONObject jsonObject){
      this.pageNum= jsonObject.getInt("pageNum");
      this.pageSize= jsonObject.getInt("pageSize");

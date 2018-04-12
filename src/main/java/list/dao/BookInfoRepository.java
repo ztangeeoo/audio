@@ -13,9 +13,10 @@ public interface BookInfoRepository extends MongoRepository<BookInfo, String> {
 
     BookInfo findByBookName(String bookName);
 
-    ArrayList<BookInfo> findByBookId(String bookId);
 
-    Page<BookInfo> findAllByOrderByCreateAtDesc(Pageable pageable);
+
+
+
 
 
 }

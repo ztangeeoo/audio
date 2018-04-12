@@ -42,7 +42,7 @@ public class WeixinServiceImpl implements WeixinService {
     @Override
     public void getQR(String bookId, HttpServletResponse response) {
         JSONObject result = RestTemplateUtil
-                .excute("GET", String.format(ACCESS_TOKEN_URL, appid, secret), null);
+                .excute("GET", String.format(ACCESS_TOKEN_URL, appid, secret), null,MediaType.APPLICATION_JSON_UTF8);
         Map<String, String> intMap = new HashMap<>();
         intMap.put("scene_str", bookId);
         Map<String, Map<String, String>> mapMap = new HashMap<>();
@@ -53,7 +53,7 @@ public class WeixinServiceImpl implements WeixinService {
         JSONObject jsonObject = JSONObject.fromObject(paramsMap);
         //{"action_name": "QR_LIMIT_STR_SCENE", "action_info": {"scene": {"scene_str": "test"}}}
         JSONObject excute = RestTemplateUtil
-                .excute("POST", String.format(ACCESS_TICKET_URL, result.getString("access_token")), jsonObject);
+                .excute("POST", String.format(ACCESS_TICKET_URL, result.getString("access_token")), jsonObject,MediaType.APPLICATION_JSON_UTF8);
         getErWeiMa(String.format(ACCESS_QR_URL, excute.getString("ticket")), bookId, response);
     }
 
