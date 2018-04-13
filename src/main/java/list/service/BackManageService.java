@@ -37,5 +37,9 @@ public interface BackManageService {
 
     void getQR(String bookId, HttpServletResponse response);
 
+    List<BookInfo> findBooks(String bookName);
+
+    void deleteAll();
+
 
 }

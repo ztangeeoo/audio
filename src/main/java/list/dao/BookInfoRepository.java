@@ -11,12 +11,4 @@ import java.util.List;
 
 public interface BookInfoRepository extends MongoRepository<BookInfo, String> {
 
-    BookInfo findByBookName(String bookName);
-
-
-
-
-
-
-
 }

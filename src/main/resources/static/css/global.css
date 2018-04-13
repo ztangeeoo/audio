@@ -84,6 +84,14 @@ body{
     color: #5FB878;
     background: #5c6b77
 }
+.header > div > span.manage{
+    font-size: 14px;
+    float: right;
+    display: block;
+    height: 80px;
+    line-height: 80px;
+    color: #B2B2B2;
+}
 .main {
     width: 1000px;
     /* background: #ccc; */
@@ -187,7 +195,8 @@ body{
     user-select: none;
     background-image: none;
     border: 1px solid transparent;
-    border-radius: 4px
+    border-radius: 4px;
+    vertical-align: top;
 }
 
 .lz_btn,.lz_btn>svg {
@@ -254,10 +263,11 @@ body{
     border: 1px solid #ddd;
     outline: none;
     width: 200px;
-    height: 35px;
+    height: 34px;
     border-radius: 5px;
     padding-left: 10px;
-    box-sizing: border-box
+    box-sizing: border-box;
+    vertical-align: top;
 }
 
 .lz_input:focus {

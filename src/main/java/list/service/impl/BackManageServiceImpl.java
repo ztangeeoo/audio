@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -176,6 +177,19 @@ public class BackManageServiceImpl implements BackManageService {
         one.setQrCode(qrCode);
         bookInfoRepository.save(one);
     }
+
+    @Override
+    public List<BookInfo> findBooks(String bookName) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("bookName").regex(bookName));
+        return mongoTemplate.find(query,BookInfo.class);
+    }
+
+    @Override
+    public void deleteAll() {
+        bookInfoRepository.deleteAll();
+    }
+
     private String getErWeiMa(String url, String bookId) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();

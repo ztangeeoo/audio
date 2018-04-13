@@ -1,7 +1,9 @@
 package list.controller;
 
 import list.dto.PageDTO;
+import list.dto.Result;
 import list.dto.ResultUtil;
+import list.entity.AudioInfo;
 import list.entity.BookInfo;
 import list.service.BackManageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +50,9 @@ public class BackManageController {
      * 删除音频
      */
     @GetMapping(value = "/removeVideo")
-    public void removeVideo(HttpServletResponse response, @RequestParam String bookId,String audioId) throws IOException {
-        backManageService.removeVideo(bookId,audioId);
-        response.sendRedirect("/audio/videoList?bookId="+bookId);
+    public void removeVideo(HttpServletResponse response, @RequestParam String bookId, String audioId) throws IOException {
+        backManageService.removeVideo(bookId, audioId);
+        response.sendRedirect("/audio/videoList?bookId=" + bookId);
     }
 
 
@@ -70,7 +72,10 @@ public class BackManageController {
      */
     @GetMapping(value = "/getAudioList/{bookId}")
     public ModelAndView getAudioList(@PathVariable String bookId, Model model) {
-        model.addAttribute("list", backManageService.getAudioList(bookId).getAudioInfoList());
+        List<AudioInfo> audioInfoList = backManageService.getAudioList(bookId).getAudioInfoList();
+        if (!ObjectUtils.isEmpty(audioInfoList)) {
+            model.addAttribute("list", audioInfoList);
+        }
         return new ModelAndView("/lixue/list");
     }
 
@@ -134,9 +139,38 @@ public class BackManageController {
         return new ModelAndView("/home");
     }
 
+    /**
+     * 生成二维码
+     */
     @GetMapping("/lixue/getQR")
     public Object getQR(@RequestParam String bookId, HttpServletResponse response) {
         backManageService.getQR(bookId, response);
         return ResultUtil.success("二维码生成成功！");
     }
+
+    /**
+     * 根据书名查找图书
+     */
+    @GetMapping("/findBooks")
+    public ModelAndView findBooks(@RequestParam String bookName, Model model) {
+        PageDTO pageDTO = new PageDTO(1, 10);
+        List<BookInfo> books = backManageService.findBooks(bookName);
+        ArrayList<Integer> pageList = backManageService.countPage(pageDTO);
+        if (!ObjectUtils.isEmpty(books)) {
+            model.addAttribute("books", books);
+            model.addAttribute("pageList", pageList);
+            model.addAttribute("bookName", bookName);
+        }
+        return new ModelAndView("/home");
+    }
+
+    /**
+     * 测试接口
+     */
+    @GetMapping("deleteAll")
+    public Result deleteAll() {
+        backManageService.deleteAll();
+        return ResultUtil.success();
+    }
+
 }
