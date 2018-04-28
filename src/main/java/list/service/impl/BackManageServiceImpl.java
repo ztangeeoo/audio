@@ -5,9 +5,12 @@ import list.dto.PageDTO;
 import list.entity.AudioInfo;
 import list.entity.BookInfo;
 import list.service.BackManageService;
+import list.util.PictureUtil;
 import list.util.UploadFileUtil;
 import list.util.http.RestTemplateUtil;
 import net.sf.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
@@ -17,7 +20,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +33,7 @@ import java.util.*;
  */
 @Service
 public class BackManageServiceImpl implements BackManageService {
+    private static final Logger logger = LoggerFactory.getLogger(BackManageServiceImpl.class);
 
     private static final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
     private static final String ACCESS_TICKET_URL = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=%s";
@@ -78,7 +81,7 @@ public class BackManageServiceImpl implements BackManageService {
         String bookDescription = request.getParameter("bookDescription");
         String bookName = request.getParameter("bookName");
         String bookId = request.getParameter("bookId");
-        String bookImage = UploadFileUtil.uploadFile(bookCover);
+        String bookImage = UploadFileUtil.uploadBookCover(PictureUtil.compressPic(bookCover, 900, 500), bookCover.getOriginalFilename());
         BookInfo bookInfo = new BookInfo();
         bookInfo.setBookCover(bookImage);
         bookInfo.setBookDescription(bookDescription);
@@ -95,8 +98,8 @@ public class BackManageServiceImpl implements BackManageService {
         String bookName = request.getParameter("bookName");
         String bookId = request.getParameter("bookId");
         BookInfo bookInfo = bookInfoRepository.findOne(bookId);
-        if(!bookCover.isEmpty()){
-            String bookImage = UploadFileUtil.uploadFile(bookCover);
+        if (!bookCover.isEmpty()) {
+            String bookImage = UploadFileUtil.uploadBookCover(PictureUtil.compressPic(bookCover, 900, 500), bookCover.getOriginalFilename());
             bookInfo.setBookCover(bookImage);
         }
         bookInfo.setBookDescription(bookDescription);
@@ -110,7 +113,7 @@ public class BackManageServiceImpl implements BackManageService {
 
         int pageSize = params.getPageSize();
         Query query = new Query();
-        query.skip(pageSize*(params.getPageNum()-1));
+        query.skip(pageSize * (params.getPageNum() - 1));
         query.limit(pageSize);
 
         Sort.Order order = new Sort.Order(Sort.Direction.DESC, "createAt");
@@ -135,9 +138,9 @@ public class BackManageServiceImpl implements BackManageService {
         BookInfo one = bookInfoRepository.findOne(bookId);
         List<AudioInfo> audioInfoList = one.getAudioInfoList();
         Iterator<AudioInfo> iterator = audioInfoList.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             AudioInfo next = iterator.next();
-            if(audioId.equals(next.getAudioId())){
+            if (audioId.equals(next.getAudioId())) {
                 iterator.remove();
             }
         }
@@ -146,21 +149,37 @@ public class BackManageServiceImpl implements BackManageService {
     }
 
     @Override
-    public ArrayList<Integer> countPage( PageDTO pageDTO) {
+    public ArrayList<Integer> countPage(PageDTO pageDTO) {
         ArrayList<Integer> pageList = new ArrayList<>();
         long count = bookInfoRepository.count();
         if (count > 0) {
-            int page = (int) ((count + pageDTO.getPageSize()-1) / pageDTO.getPageSize());
+            int page = (int) ((count + pageDTO.getPageSize() - 1) / pageDTO.getPageSize());
             for (int i = 1; i <= page; i++) {
                 pageList.add(i);
             }
         }
         return pageList;
     }
+
     @Override
-    public void getQR(String bookId, HttpServletResponse response) {
+    public ArrayList<Integer> countPageByBook(PageDTO pageDTO, String bookName) {
+        long count = bookInfoRepository.countByBookNameContains(bookName);
+        ArrayList<Integer> pageList = new ArrayList<>();
+        if (count > 0) {
+            int page = (int) ((count + pageDTO.getPageSize() - 1) / pageDTO.getPageSize());
+            for (int i = 1; i <= page; i++) {
+                pageList.add(i);
+            }
+        }
+        return pageList;
+    }
+
+
+    @Override
+    public String getQR(String bookId, HttpServletResponse response) {
         JSONObject result = RestTemplateUtil
                 .excute("GET", String.format(ACCESS_TOKEN_URL, appid, secret), null, MediaType.APPLICATION_JSON_UTF8);
+        logger.debug("获取token={}", result.toString());
         Map<String, String> intMap = new HashMap<>();
         intMap.put("scene_str", bookId);
         Map<String, Map<String, String>> mapMap = new HashMap<>();
@@ -172,17 +191,24 @@ public class BackManageServiceImpl implements BackManageService {
         //{"action_name": "QR_LIMIT_STR_SCENE", "action_info": {"scene": {"scene_str": "test"}}}
         JSONObject excute = RestTemplateUtil
                 .excute("POST", String.format(ACCESS_TICKET_URL, result.getString("access_token")), jsonObject, MediaType.APPLICATION_JSON_UTF8);
+        logger.debug("获取ticket={}", excute.toString());
         String qrCode = getErWeiMa(String.format(ACCESS_QR_URL, excute.getString("ticket")), bookId);
         BookInfo one = bookInfoRepository.findOne(bookId);
         one.setQrCode(qrCode);
         bookInfoRepository.save(one);
+        return qrCode;
     }
 
     @Override
-    public List<BookInfo> findBooks(String bookName) {
+    public List<BookInfo> findBooks(String bookName, PageDTO params) {
+        int pageSize = params.getPageSize();
         Query query = new Query();
-        query.addCriteria(Criteria.where("bookName").regex(bookName));
-        return mongoTemplate.find(query,BookInfo.class);
+        query.skip(pageSize * (params.getPageNum() - 1));
+        query.limit(pageSize);
+        Sort.Order order = new Sort.Order(Sort.Direction.DESC, "createAt");
+        Sort orders = new Sort(order);
+        query.addCriteria(Criteria.where("bookName").regex(bookName)).with(orders);
+        return mongoTemplate.find(query, BookInfo.class);
     }
 
     @Override
@@ -202,6 +228,7 @@ public class BackManageServiceImpl implements BackManageService {
                 byte[].class);
 
         byte[] result = response.getBody();
-        return UploadFileUtil.uploadImage(result,bookId);
+        logger.debug("获取二维码,response={}", response.getStatusCode());
+        return UploadFileUtil.uploadImage(result, bookId);
     }
 }

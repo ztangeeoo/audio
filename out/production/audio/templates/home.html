@@ -51,7 +51,7 @@
             <td >
                <!-- 'javascript:openBox(\''+${curCabNo}+'\',\''+${box.no}+'\')'-->
                 <!--@{/lixue/getQR(bookId=${book.bookId})}-->
-                <a th:if="${book.qrCode} == null" th:href="'javascript:qrCode(this,\''+${book.bookId}+'\')'">生成</a>
+                <a th:if="${book.qrCode} == null" th:onclick="'javascript:qrCode(this,\''+${book.bookId}+'\')'" href="javascript:void(0)">生成</a>
                 <a th:if="${book.qrCode} != null" th:href="'javascript:showPic(\''+${book.qrCode}+'\')'">查看</a>
             </td>
             <td><a th:href="@{'/videoList?bookId='+${book.bookId}}">查看</a></td>

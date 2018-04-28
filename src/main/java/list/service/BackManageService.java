@@ -17,27 +17,29 @@ public interface BackManageService {
     /**
      * 文件上传
      */
-    void addVideo(MultipartFile file, String bookId,String fileTime);
+    void addVideo(MultipartFile file, String bookId, String fileTime);
 
     BookInfo getAudioList(String bookId);
 
-    void addBook(HttpServletRequest request,MultipartFile bookCover);
+    void addBook(HttpServletRequest request, MultipartFile bookCover);
 
     List<BookInfo> findListBook(PageDTO pageDTO);
 
-    void changeBook(HttpServletRequest request,MultipartFile bookCover);
+    void changeBook(HttpServletRequest request, MultipartFile bookCover);
 
     BookInfo findby(String bookId);
 
     void removeBook(String bookId);
 
-    void removeVideo(String bookId,String audioId);
+    void removeVideo(String bookId, String audioId);
 
-    ArrayList<Integer> countPage( PageDTO pageDTO);
+    ArrayList<Integer> countPage(PageDTO pageDTO);
 
-    void getQR(String bookId, HttpServletResponse response);
+    ArrayList<Integer> countPageByBook(PageDTO pageDTO, String bookName);
 
-    List<BookInfo> findBooks(String bookName);
+    String getQR(String bookId, HttpServletResponse response);
+
+    List<BookInfo> findBooks(String bookName, PageDTO pageDTO);
 
     void deleteAll();
 

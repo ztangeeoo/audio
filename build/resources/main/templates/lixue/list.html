@@ -48,16 +48,16 @@
 <body>
 <video src="" id="myMusic" controls="controls"></video>
 <div class="video_list">
-   <!-- <ul>
+    <ul>
         <li th:each="prod : ${list}" class="list" th:attr="data-url=${prod.fileUrl}" th:text="${prod.fileName}">
         </li>
-        <li ></li>
+        <li></li>
 
-    </ul>-->
-    <tr th:each="video:${list}">
+    </ul>
+    <!--<tr th:each="video:${list}">
         <td><a th:attr="data-url=${video.fileUrl}" th:text="${video.fileName}"></a></td>
         <td th:value="${video.fileTime}" th:name="${video.fileTime}"></td>
-    </tr>
+    </tr>-->
 </div>
 <script>
     (function (doc) {

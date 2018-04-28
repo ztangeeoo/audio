@@ -5,8 +5,10 @@ import list.constant.Constant;
 import list.dao.BookInfoRepository;
 import list.dto.Article;
 import list.dto.NewsMessage;
+import list.dto.ResultEnum;
 import list.dto.TestMessageDTO;
 import list.entity.BookInfo;
+import list.exception.AudioException;
 import list.service.WeixinService;
 import list.util.ConvertUtil;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -15,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -79,6 +82,10 @@ public class WeixinServiceImpl implements WeixinService {
                 s = eventKey;
             }
             BookInfo one = bookInfoRepository.findOne(s);
+            if(ObjectUtils.isEmpty(one)){
+                logger.info("没有此书！bookId={}",s);
+                throw new AudioException(ResultEnum.RC_0000001);
+            }
             NewsMessage newsMessage = new NewsMessage();
             newsMessage.setToUserName(fromUserName);
             newsMessage.setFromUserName(toUserName);

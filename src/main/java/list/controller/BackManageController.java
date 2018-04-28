@@ -144,8 +144,7 @@ public class BackManageController {
      */
     @GetMapping("/lixue/getQR")
     public Object getQR(@RequestParam String bookId, HttpServletResponse response) {
-        backManageService.getQR(bookId, response);
-        return ResultUtil.success("二维码生成成功！");
+        return ResultUtil.success(backManageService.getQR(bookId, response));
     }
 
     /**
@@ -154,11 +153,11 @@ public class BackManageController {
     @GetMapping("/findBooks")
     public ModelAndView findBooks(@RequestParam String bookName, Model model) {
         PageDTO pageDTO = new PageDTO(1, 10);
-        List<BookInfo> books = backManageService.findBooks(bookName);
-        ArrayList<Integer> pageList = backManageService.countPage(pageDTO);
+        List<BookInfo> books = backManageService.findBooks(bookName, pageDTO);
+        //ArrayList<Integer> pageList = backManageService.countPageByBook(pageDTO, bookName);
         if (!ObjectUtils.isEmpty(books)) {
             model.addAttribute("books", books);
-            model.addAttribute("pageList", pageList);
+            //model.addAttribute("pageList", pageList);
             model.addAttribute("bookName", bookName);
         }
         return new ModelAndView("/home");

@@ -1,11 +1,17 @@
 function qrCode(_this,bookid) {
+    _this.innerHTML = "loading…"
     $.ajax({
         url: "/audio/lixue/getQR/?bookId=" + bookid,
         type: "get"
     }).done(function(data) {
         if(data.code == "0000000"){
-            alert("二维码生成成功！");
-            console.log(_this.innerHTML = '222')
+            var imgUrl =  data.data;
+            _this.innerHTML = "查看";
+            layer.msg('生成成功！点击查看');
+            $(_this).attr("onclick","showPic('" + imgUrl + "')");
+        } else {
+            layer.msg('生成失败，请重试！');
+            _this.innerHTML = "生成";
         }
     });
 }

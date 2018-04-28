@@ -5,6 +5,8 @@ import com.aliyun.oss.common.auth.DefaultCredentialProvider;
 import com.aliyun.oss.model.ObjectMetadata;
 import list.dto.ResultEnum;
 import list.exception.AudioException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -12,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.util.Random;
 
 /**
  * @author ztang
@@ -20,23 +21,27 @@ import java.util.Random;
  */
 @Component
 public class UploadFileUtil implements InitializingBean {
-    private static final String OSS_BUCKET_NAME = "audiocss";
+    private static final Logger logger = LoggerFactory.getLogger(UploadFileUtil.class);
 
     private static String ep;
     private static String ak;
     private static String aks;
+    private static String bn;
     @Value("${oss.endpoint}")
     private String endpoint;
     @Value("${oss.accessKeyId}")
     private String accessKeyId;
     @Value("${oss.accessKeySecret}")
     private String accessKeySecret;
+    @Value("${oss.bucketName}")
+    private String bucketName;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         ep = endpoint;
         ak = accessKeyId;
         aks = accessKeySecret;
+        bn = bucketName;
     }
 
     public static String uploadFile(MultipartFile file) {
@@ -48,24 +53,39 @@ public class UploadFileUtil implements InitializingBean {
 
         try {
             meta.setContentType(contentType);
-            ossClient.putObject("audiocss", fileName, new ByteArrayInputStream(file.getBytes()), meta);
+            ossClient.putObject(bn, fileName, new ByteArrayInputStream(file.getBytes()), meta);
         } catch (IOException e) {
             throw new AudioException(ResultEnum.RC_0401001);
         }
         ossClient.shutdown();
-        return String.format("https://%s.oss-cn-shenzhen.aliyuncs.com/%s", OSS_BUCKET_NAME, fileName);
+        return String.format("https://%s.oss-cn-shenzhen.aliyuncs.com/%s", bn, fileName);
     }
 
-    public static String uploadImage(byte[] bytes,String bookId) {
+    public static String uploadImage(byte[] bytes, String bookId) {
         ObjectMetadata meta = new ObjectMetadata();
-        String fileName = bookId + ".jgp";
+        String fileName = bookId + ".jpg";
         meta.setContentType(MediaType.IMAGE_JPEG_VALUE);
-        OSSClient ossClient = new OSSClient("http://oss-cn-shenzhen.aliyuncs.com",
-                new DefaultCredentialProvider("LTAIKXdZgQKa0RT9", "Ohci0Ycs3NnXJGCRRPhcGFkXaDnIZ9"), null);
-        ossClient.putObject(OSS_BUCKET_NAME, fileName, new ByteArrayInputStream(bytes), meta);
+        OSSClient ossClient = new OSSClient(ep,
+                new DefaultCredentialProvider(ak, aks), null);
+        logger.debug("开始上传图片!fileName={}",fileName);
+        ossClient.putObject(bn, fileName, PictureUtil.insertLogo(bytes), meta);
         ossClient.shutdown();
-        return String.format("https://%s.oss-cn-shenzhen.aliyuncs.com/%s", OSS_BUCKET_NAME, fileName);
+        logger.debug("上传文件完成!");
+        return String.format("https://%s.oss-cn-shenzhen.aliyuncs.com/%s", bn, fileName);
     }
+
+    public static String uploadBookCover(InputStream inputStream, String fileName) {
+        ObjectMetadata meta = new ObjectMetadata();
+        meta.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        OSSClient ossClient = new OSSClient(ep,
+                new DefaultCredentialProvider(ak, aks), null);
+        logger.debug("开始上传图片!fileName={}",fileName);
+        ossClient.putObject(bn, fileName,inputStream, meta);
+        ossClient.shutdown();
+        logger.debug("上传文件完成!");
+        return String.format("https://%s.oss-cn-shenzhen.aliyuncs.com/%s", bn, fileName);
+    }
+
 
     public static void main(String[] args) {
         byte[] buffer = null;

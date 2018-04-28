@@ -60,4 +60,8 @@ dependencies {
     compile group: 'dom4j', name: 'dom4j', version: '1.6.1'
     compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.7'
     compile group: 'dom4j', name: 'dom4j', version: '1.6.1'
+    compile group: 'com.google.zxing', name: 'core', version: '3.3.0'
+    compile group: 'com.github.binarywang',name: 'weixin-java-cp',version: '3.0.0'
+    compile group: 'com.github.binarywang',name: 'weixin-java-mp',version: '3.0.0'
+    compile group: 'com.github.binarywang',name: 'weixin-java-open',version: '3.0.0'
 }

@@ -1,6 +1,5 @@
 package list.exception;
 
-import list.dto.Result;
 import list.dto.ResultEnum;
 import list.dto.ResultUtil;
 import org.springframework.http.HttpHeaders;
