@@ -24,7 +24,7 @@
 
         <div class="add_book">
             <form action="/audio/addVideo" mounted="post" enctype="multipart/form-data" method="post">
-                <p>上传音频：<input type="file" name="file" class="lz_input"/></p>
+                <p>上传音频：<input type="file" name="file" class="lz_input" multiple="multiple"/></p>
                 <p><input type="hidden" th:name="bookId" th:value="${bookId}" class="lz_input"/></p>
                 <p>音频时长：<input type="text" th:name="fileTime" class="lz_input"/></p>
                 <input type="submit" class="lz_btn btn-info" value="保存"/>

@@ -5,6 +5,7 @@ import com.aliyun.oss.common.auth.DefaultCredentialProvider;
 import com.aliyun.oss.model.ObjectMetadata;
 import list.dto.ResultEnum;
 import list.exception.AudioException;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.Date;
+import java.util.Random;
 
 /**
  * @author ztang
@@ -46,20 +49,27 @@ public class UploadFileUtil implements InitializingBean {
 
     public static String uploadFile(MultipartFile file) {
         String contentType = file.getContentType();
-        String fileName = file.getOriginalFilename();
+        long time = new Date().getTime();
+        String fileName = String.valueOf(time);
+        logger.debug("创建oss对象前的时间，time={}",System.currentTimeMillis());
         OSSClient ossClient = new OSSClient(ep, new DefaultCredentialProvider(ak, aks), null);
         // 创建上传Object的Metadata
         ObjectMetadata meta = new ObjectMetadata();
-
+        logger.debug("创建oss对象后的时间，time={}",System.currentTimeMillis());
         try {
             meta.setContentType(contentType);
-            ossClient.putObject(bn, fileName, new ByteArrayInputStream(file.getBytes()), meta);
+            logger.debug("上传文件前的时间，time={}",System.currentTimeMillis());
+            ossClient.putObject(bn, fileName, file.getInputStream(), meta);
+            logger.debug("上传文件后的时间，time={}",System.currentTimeMillis());
         } catch (IOException e) {
             throw new AudioException(ResultEnum.RC_0401001);
         }
+        logger.debug("关闭oss流前的时间，time={}",System.currentTimeMillis());
         ossClient.shutdown();
+        logger.debug("关闭oss流后的时间，time={}",System.currentTimeMillis());
         return String.format("https://%s.oss-cn-shenzhen.aliyuncs.com/%s", bn, fileName);
     }
+
 
     public static String uploadImage(byte[] bytes, String bookId) {
         ObjectMetadata meta = new ObjectMetadata();
@@ -67,7 +77,7 @@ public class UploadFileUtil implements InitializingBean {
         meta.setContentType(MediaType.IMAGE_JPEG_VALUE);
         OSSClient ossClient = new OSSClient(ep,
                 new DefaultCredentialProvider(ak, aks), null);
-        logger.debug("开始上传图片!fileName={}",fileName);
+        logger.debug("开始上传图片!fileName={}", fileName);
         ossClient.putObject(bn, fileName, PictureUtil.insertLogo(bytes), meta);
         ossClient.shutdown();
         logger.debug("上传文件完成!");
@@ -79,8 +89,8 @@ public class UploadFileUtil implements InitializingBean {
         meta.setContentType(MediaType.IMAGE_JPEG_VALUE);
         OSSClient ossClient = new OSSClient(ep,
                 new DefaultCredentialProvider(ak, aks), null);
-        logger.debug("开始上传图片!fileName={}",fileName);
-        ossClient.putObject(bn, fileName,inputStream, meta);
+        logger.debug("开始上传图片!fileName={}", fileName);
+        ossClient.putObject(bn, fileName, inputStream, meta);
         ossClient.shutdown();
         logger.debug("上传文件完成!");
         return String.format("https://%s.oss-cn-shenzhen.aliyuncs.com/%s", bn, fileName);
@@ -88,6 +98,11 @@ public class UploadFileUtil implements InitializingBean {
 
 
     public static void main(String[] args) {
+        long time = new Date().getTime();
+        System.out.println(time);
+        int fileId = (int) (100 + Math.random() * 10000000);
+        String fileName = String.valueOf(fileId);
+        System.out.println(fileName);
         byte[] buffer = null;
         try {
             File file = new File("G:\\PlayAudio/1.jpg");

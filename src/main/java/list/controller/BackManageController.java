@@ -41,7 +41,7 @@ public class BackManageController {
      * 保存添加的音频并返回到音频列表
      */
     @PostMapping(value = "/addVideo")
-    public void uploadImg(@RequestParam("file") MultipartFile file, String bookId, String fileTime, HttpServletResponse response) throws IOException {
+    public void uploadImg(@RequestParam("file") MultipartFile[] file, String bookId, String fileTime, HttpServletResponse response) throws IOException {
         backManageService.addVideo(file, bookId, fileTime);
         response.sendRedirect("/audio/videoList?bookId=" + bookId);
     }
@@ -52,9 +52,7 @@ public class BackManageController {
     @GetMapping(value = "/removeVideo")
     public void removeVideo(HttpServletResponse response, @RequestParam String bookId, String audioId) throws IOException {
         backManageService.removeVideo(bookId, audioId);
-        response.sendRedirect("/audio/videoList?bookId=" + bookId);
-    }
-
+        response.sendRedirect("/audio/videoList?bookId=" + bookId);    }
 
     /**
      * 查看音频列表

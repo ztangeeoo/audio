@@ -5,7 +5,6 @@ import list.dto.PageDTO;
 import list.entity.AudioInfo;
 import list.entity.BookInfo;
 import list.service.BackManageService;
-import list.util.PictureUtil;
 import list.util.UploadFileUtil;
 import list.util.http.RestTemplateUtil;
 import net.sf.json.JSONObject;
@@ -51,24 +50,28 @@ public class BackManageServiceImpl implements BackManageService {
 
 
     @Override
-    public void addVideo(MultipartFile file, String bookId, String fileTime) {
-        String fileName = file.getOriginalFilename();
-        String url = UploadFileUtil.uploadFile(file);
+    public void addVideo(MultipartFile[] files, String bookId, String fileTime) {
+        MultipartFile file = null;
         BookInfo bookInfo = bookInfoRepository.findOne(bookId);
-
         List<AudioInfo> list = bookInfo.getAudioInfoList();
         if (ObjectUtils.isEmpty(list)) {
             list = new ArrayList<>();
         }
-        AudioInfo audioInfo = new AudioInfo();
-        audioInfo.setAudioId(UUID.randomUUID().toString().replace("-", "").toUpperCase());
-        audioInfo.setFileTime(fileTime);
-        audioInfo.setFileName(fileName);
-        audioInfo.setFileUrl(url);
-        list.add(audioInfo);
+        for (int i = 0; i < files.length; i++) {
+            file = files[i];
+            if (file != null) {
+                String fileName = file.getOriginalFilename();
+                String url = UploadFileUtil.uploadFile(file);
+                AudioInfo audioInfo = new AudioInfo();
+                audioInfo.setAudioId(UUID.randomUUID().toString().replace("-", "").toUpperCase());
+                audioInfo.setFileTime(fileTime);
+                audioInfo.setFileName(fileName);
+                audioInfo.setFileUrl(url);
+                list.add(audioInfo);
+            }
+        }
         bookInfo.setAudioInfoList(list);
         bookInfoRepository.save(bookInfo);
-
     }
 
     @Override
@@ -81,7 +84,7 @@ public class BackManageServiceImpl implements BackManageService {
         String bookDescription = request.getParameter("bookDescription");
         String bookName = request.getParameter("bookName");
         String bookId = request.getParameter("bookId");
-        String bookImage = UploadFileUtil.uploadBookCover(PictureUtil.compressPic(bookCover, 900, 500), bookCover.getOriginalFilename());
+        String bookImage = UploadFileUtil.uploadFile(bookCover);
         BookInfo bookInfo = new BookInfo();
         bookInfo.setBookCover(bookImage);
         bookInfo.setBookDescription(bookDescription);
@@ -99,7 +102,7 @@ public class BackManageServiceImpl implements BackManageService {
         String bookId = request.getParameter("bookId");
         BookInfo bookInfo = bookInfoRepository.findOne(bookId);
         if (!bookCover.isEmpty()) {
-            String bookImage = UploadFileUtil.uploadBookCover(PictureUtil.compressPic(bookCover, 900, 500), bookCover.getOriginalFilename());
+            String bookImage = UploadFileUtil.uploadFile(bookCover);
             bookInfo.setBookCover(bookImage);
         }
         bookInfo.setBookDescription(bookDescription);

@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
@@ -80,7 +79,7 @@ public class PictureUtil implements InitializingBean {
         int x = (QRCODE_SIZE - width) / 2;
         int y = (QRCODE_SIZE - height) / 2;
         graph.drawImage(source, 0, 0, QRCODE_SIZE, QRCODE_SIZE, null);
-        graph.drawImage(src, x, y, 86, 86, null);
+        graph.drawImage(src, x, y, null);
         graph.dispose();
         bi.flush();
         source.flush();
@@ -137,12 +136,12 @@ public class PictureUtil implements InitializingBean {
     }
 
     public static void main(String[] args) throws Exception {
-      /*  BufferedImage bufferedImage = ImageIO.read(new FileInputStream("G:\\PlayAudio/hehe.jpg"));
+        BufferedImage bufferedImage = ImageIO.read(new FileInputStream("G:\\PlayAudio/logo (2).jpg"));
         // 插入图片
-        QRCodeUtil.insertImage(bufferedImage, "https://audiocss.oss-cn-shenzhen.aliyuncs.com/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20180425124139.jpg", true);
+        BufferedImage image = PictureUtil.insertImage(bufferedImage, "https://audiocss.oss-cn-shenzhen.aliyuncs.com/TIM%E5%9B%BE%E7%89%8720180502135457.png", true);
         String file = new Random().nextInt(99999999) + ".jpg";
         System.out.println(file);
-        ImageIO.write(bufferedImage, "png", new File("G:\\PlayAudio/" + file));*/
+        ImageIO.write(image, "jpg", new File("G:\\PlayAudio/" + file));
       /*  BufferedImage im = ImageIO.read(new FileInputStream("G:\\PlayAudio/6066903.jpg"));
         BufferedImage source = ImageIO.read(new FileInputStream("G:\\PlayAudio/123132.jpg"));
         BufferedImage bi = new BufferedImage(430, 430, BufferedImage.TYPE_INT_RGB);

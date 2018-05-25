@@ -17,7 +17,7 @@ public interface BackManageService {
     /**
      * 文件上传
      */
-    void addVideo(MultipartFile file, String bookId, String fileTime);
+    void addVideo(MultipartFile[] file, String bookId, String fileTime);
 
     BookInfo getAudioList(String bookId);
 

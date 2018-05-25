@@ -26,6 +26,13 @@ public class BookInfo {
     private List<AudioInfo> audioInfoList;
     @Field("qr_code")
     private String qrCode;
+
+    /********卖了多少本***************/
+/*    private String saleQuantity;
+
+    private String bookHits;*/
+
+
     @Field("create_at")
     private Date createAt;
 
